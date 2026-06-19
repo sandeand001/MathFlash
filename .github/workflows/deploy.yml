@@ -28,8 +28,10 @@ jobs:
       - run: npm run build
         env:
           NODE_ENV: production
-      - name: Add .nojekyll
-        run: touch build/.nojekyll
+      - name: Add .nojekyll and SPA 404 fallback
+        run: |
+          touch build/.nojekyll
+          cp build/index.html build/404.html
       - uses: actions/upload-pages-artifact@v3
         with:
           path: build
