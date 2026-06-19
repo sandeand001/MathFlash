@@ -6,7 +6,7 @@
   import { data, activeProfile, lastDrillResult } from '$lib/stores/appState.js';
   import { recordSession } from '$lib/storage.js';
   import { nextProblem, shouldAutoSubmit } from '$lib/generator.js';
-  import { playCorrect, playWrong } from '$lib/audio.js';
+  import { playCorrect, playWrong, playTick } from '$lib/audio.js';
   import { hapticTap, hapticWrong } from '$lib/haptics.js';
 
   let profile = $derived($activeProfile);
@@ -45,9 +45,15 @@
     problemKey++;
 
     const startMs = performance.now();
+    let lastTickSecond = Math.ceil(settings.duration);
     timerInterval = setInterval(() => {
       const elapsed = (performance.now() - startMs) / 1000;
       timeLeft = Math.max(0, settings.duration - elapsed);
+      const whole = Math.ceil(timeLeft);
+      if (whole !== lastTickSecond && whole > 0 && whole <= 5) {
+        playTick();
+      }
+      lastTickSecond = whole;
       if (timeLeft <= 0) end();
     }, 100);
   }
