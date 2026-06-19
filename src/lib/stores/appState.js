@@ -26,7 +26,12 @@ function createDataStore() {
 
 export const data = createDataStore();
 
-export const activeProfile = derived(data, ($d) => getActiveProfile($d));
+export const activeProfile = derived(data, ($d) => {
+  const p = getActiveProfile($d);
+  // Return a shallow clone so Svelte 5 $derived consumers re-run even though
+  // we mutate the underlying object in place.
+  return p ? { ...p } : null;
+});
 
 /** Holds the result of the just-completed drill, for the Results screen. */
 export const lastDrillResult = writable(null);
